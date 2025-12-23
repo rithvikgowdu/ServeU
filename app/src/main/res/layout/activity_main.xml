@@ -97,6 +97,17 @@
             android:background="@drawable/glass_button_bg"
             android:elevation="8dp"/>
 
+        <!-- STATUS TEXT (REQUIRED FOR BINDING) -->
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ServeU ready"
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:layout_marginTop="20dp"/>
+
+
         <!-- LOCATION CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/locationCard"
@@ -135,17 +146,18 @@
 
     <!-- SEND BUTTON -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/sendButton"
-        android:layout_width="355dp"
-        android:layout_height="106dp"
-        android:layout_margin="24dp"
+        android:id="@+id/startHelpBtn"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
         android:text="SEND EMERGENCY REQUEST"
-        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="#FFFFFF"
         app:backgroundTint="#DC2626"
         app:cornerRadius="18dp"
+        android:layout_margin="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
