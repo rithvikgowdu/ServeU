@@ -2,53 +2,55 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
 
-    <!-- Gradient Background -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_bg"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Header with Glow -->
+    <!-- Professional Header -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="@drawable/header_glow"
+        android:layout_height="160dp"
+        android:background="#1E40AF"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SERVEU"
-            android:textColor="#FFFFFF"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-light" />
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_emergency"
+            android:tint="#FFFFFF" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Offline SOS Rescue"
-            android:textColor="#E0F2FE"
-            android:textSize="14sp"
-            android:alpha="0.9" />
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="ServeU"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="Emergency Location Services"
+            android:textColor="#BFDBFE"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- Live GPS Card -->
-    <androidx.cardview.widget.CardView
+    <!-- GPS Location Card -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/gpsCard"
         android:layout_width="0dp"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_margin="24dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
@@ -57,13 +59,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📍 LIVE LOCATION"
-                android:textColor="#10B981"
+                android:text="Current Position"
+                android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -72,67 +74,100 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Acquiring GPS signal..."
-                android:textColor="#FFFFFF"
+                android:fontFamily="monospace"
+                android:text="00.000000, 00.000000"
+                android:textColor="#111827"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:fontFamily="monospace" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:textStyle="bold" />
 
-    <!-- Status Bar -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="GPS Signal: Strong"
+                android:textColor="#6B7280"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Status Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/statusCard"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="72dp"
         android:layout_margin="24dp"
-        app:cardCornerRadius="30dp"
-        app:strokeColor="#00FF88"
-        app:strokeWidth="2dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gpsCard">
 
-        <TextView
-            android:id="@+id/status"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="🚗 Ready to broadcast SOS"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <ImageView
+                android:id="@+id/statusIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_signal"
+                android:tint="#6B7280" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="System Ready"
+                android:textColor="#111827"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/statusDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bluetooth Active"
+                android:textColor="#6B7280"
+                android:textSize="12sp" />
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- SOS Button with Pulse Animation -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- Primary Action Button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/startHelpBtn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
         android:layout_margin="32dp"
-        android:backgroundTint="#EF4444"
-        android:src="@drawable/ic_sos_pulse"
-        app:fabSize="normal"
+        android:text="Initiate Emergency Broadcast"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:backgroundTint="#DC2626"
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_broadcast"
+        app:iconGravity="start"
+        app:iconPadding="12dp"
+        app:iconSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/statusCard"
-        app:layout_constraintBottom_toTopOf="@id/stopBtn" />
+        app:layout_constraintTop_toBottomOf="@id/statusCard" />
 
-    <!-- Stop Button -->
+    <!-- Secondary Action -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/stopBtn"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_margin="32dp"
-        android:text="STOP SOS"
-        android:textColor="#FFFFFF"
+        android:text="Cancel Broadcast"
+        android:textColor="#DC2626"
         android:textSize="16sp"
-        app:backgroundTint="#10B981"
-        app:cornerRadius="28dp"
-        app:icon="@drawable/ic_stop"
-        app:iconSize="20dp"
+        app:cornerRadius="12dp"
+        app:strokeColor="#DC2626"
+        app:strokeWidth="2dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
