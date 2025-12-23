@@ -1,8 +1,10 @@
 package com.example.serveu
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var selectedEmergency = "General SOS"
+    private val emergencyNumber = "9440696941" // 🔴 change if needed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         setupEmergencyButtons()
         setupSendButton()
-
         checkLocationPermission()
     }
 
@@ -38,28 +40,28 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnBreakdown.setOnClickListener {
             selectedEmergency = "Vehicle Breakdown"
-            binding.status.text = "🚗 Vehicle Breakdown selected"
+            binding.status.text = "Vehicle Breakdown selected"
         }
 
         binding.btnAccident.setOnClickListener {
             selectedEmergency = "Accident"
-            binding.status.text = "🚨 Accident selected"
+            binding.status.text = "Accident selected"
         }
 
         binding.btnMedical.setOnClickListener {
             selectedEmergency = "Medical Emergency"
-            binding.status.text = "🩺 Medical Emergency selected"
+            binding.status.text = "Medical Emergency selected"
         }
 
         binding.btnFuel.setOnClickListener {
             selectedEmergency = "Fuel / Battery Issue"
-            binding.status.text = "⛽ Fuel / Battery Issue selected"
+            binding.status.text = "Fuel / Battery Issue selected"
         }
     }
 
     private fun setupSendButton() {
         binding.startHelpBtn.setOnClickListener {
-            sendEmergencyRequest()
+            sendEmergencySms()
         }
     }
 
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             if (location != null) {
                 updateLocationUI(location)
             } else {
-                binding.locationText.text = "📍 Unable to fetch GPS"
+                binding.locationText.text = "Unable to fetch GPS"
             }
         }
     }
@@ -100,22 +102,30 @@ class MainActivity : AppCompatActivity() {
     private fun updateLocationUI(location: Location) {
         val lat = String.format("%.6f", location.latitude)
         val lng = String.format("%.6f", location.longitude)
-        binding.locationText.text = "📍 $lat , $lng"
+        binding.locationText.text = "$lat , $lng"
     }
 
-    // ---------------- EMERGENCY ACTION ----------------
+    // ---------------- SMS (INTENT METHOD) ----------------
 
-    private fun sendEmergencyRequest() {
-        fetchLocation()
+    private fun sendEmergencySms() {
 
-        Toast.makeText(
-            this,
-            "Emergency sent: $selectedEmergency",
-            Toast.LENGTH_SHORT
-        ).show()
+        val message = """
+            SERVEU ALERT 🚨
+            Type: $selectedEmergency
+            Location: ${binding.locationText.text}
+            Please help immediately.
+        """.trimIndent()
 
-        binding.status.text =
-            "✅ Emergency request sent\nType: $selectedEmergency"
+        val smsIntent = Intent(Intent.ACTION_SENDTO)
+        smsIntent.data = Uri.parse("smsto:$emergencyNumber")
+        smsIntent.putExtra("sms_body", message)
+
+        try {
+            startActivity(smsIntent)
+            binding.status.text = "SMS ready to send"
+        } catch (e: Exception) {
+            Toast.makeText(this, "No SMS app found", Toast.LENGTH_LONG).show()
+        }
     }
 
     // ---------------- PERMISSION RESULT ----------------
@@ -132,12 +142,6 @@ class MainActivity : AppCompatActivity() {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             fetchLocation()
-        } else {
-            Toast.makeText(
-                this,
-                "Location permission required for ServeU",
-                Toast.LENGTH_LONG
-            ).show()
         }
     }
 }
