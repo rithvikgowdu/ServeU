@@ -6,14 +6,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.serveu.adapter.EmergencyAdapter
 import com.example.serveu.databinding.ActivityAdminDashboardBinding
 import com.example.serveu.model.EmergencyRequest
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class AdminDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAdminDashboardBinding
     private lateinit var database: DatabaseReference
     private lateinit var adapter: EmergencyAdapter
-    private val requestList = mutableListOf<EmergencyRequest>()
+    private val emergencyRequests = mutableListOf<EmergencyRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,46 +26,36 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance().getReference("emergency_requests")
 
-        setupRecyclerView()
-        fetchRequests()
-    }
-
-    private fun setupRecyclerView() {
-        adapter = EmergencyAdapter(requestList) { request ->
-            deleteRequest(request)
+        adapter = EmergencyAdapter(emergencyRequests) { requestId ->
+            deleteRequest(requestId)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
+
+        fetchEmergencyRequests()
     }
 
-    private fun fetchRequests() {
-        database.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val request = snapshot.getValue(EmergencyRequest::class.java)
-                if (request != null) {
-                    requestList.add(0, request) // Add to top of the list
-                    adapter.notifyItemInserted(0)
+    private fun fetchEmergencyRequests() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                emergencyRequests.clear()
+                for (requestSnapshot in snapshot.children) {
+                    val request = requestSnapshot.getValue(EmergencyRequest::class.java)
+                    if (request != null) {
+                        request.id = requestSnapshot.key!!
+                        emergencyRequests.add(request)
+                    }
                 }
+                adapter.notifyDataSetChanged()
             }
 
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                val removedRequest = snapshot.getValue(EmergencyRequest::class.java)
-                val index = requestList.indexOfFirst { it.id == removedRequest?.id }
-                if (index != -1) {
-                    requestList.removeAt(index)
-                    adapter.notifyItemRemoved(index)
-                }
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
             }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun deleteRequest(request: EmergencyRequest) {
-        request.id?.let {
-            database.child(it).removeValue()
-        }
+    private fun deleteRequest(requestId: String) {
+        database.child(requestId).removeValue()
     }
 }

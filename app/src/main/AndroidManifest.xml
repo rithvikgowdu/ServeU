@@ -23,24 +23,24 @@
             android:name=".GeminiGuidanceActivity"
             android:exported="false" />
 
-        <!-- RoleSelectionActivity is the new launcher -->
         <activity
-            android:name=".ui.RoleSelectionActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".ui.RoleSelectionActivity"
+            android:exported="false" />
 
-        <!-- MainActivity is now just a regular activity (dispatcher) -->
         <activity android:name=".MainActivity" />
 
-        <!-- Other new activities -->
         <activity android:name=".ui.SecretCodeActivity" />
         <activity android:name=".ui.AdminDashboardActivity" />
         <activity android:name=".ui.EmergencySetupActivity" />
-        <activity android:name=".ui.UserHomeActivity" />
 
     </application>
 

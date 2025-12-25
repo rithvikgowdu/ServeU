@@ -9,22 +9,20 @@ import com.example.serveu.databinding.ActivitySecretCodeBinding
 class SecretCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecretCodeBinding
-    private companion object {
-        private const val ADMIN_SECRET_CODE = "BOSS6969"
-    }
+    private val ADMIN_SECRET_CODE = "ADD_SECRET_CODE_HERE"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySecretCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnSubmitCode.setOnClickListener {
-            val enteredCode = binding.etSecretCode.text.toString()
-            if (enteredCode == ADMIN_SECRET_CODE) {
+        binding.btnSubmit.setOnClickListener {
+            val secretCode = binding.etSecretCode.text.toString()
+            if (secretCode == ADMIN_SECRET_CODE) {
                 startActivity(Intent(this, AdminDashboardActivity::class.java))
                 finish()
             } else {
-                Toast.makeText(this, "Incorrect Code", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Invalid Secret Code", Toast.LENGTH_SHORT).show()
             }
         }
     }

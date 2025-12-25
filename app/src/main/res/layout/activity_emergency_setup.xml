@@ -4,19 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="32dp">
+    android:padding="16dp">
 
     <EditText
-        android:id="@+id/etEmergencyContact"
+        android:id="@+id/etEmergencyNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Emergency Contact Number"
-        android:inputType="phone"/>
+        android:hint="Enter Emergency Contact Number" />
 
     <Button
-        android:id="@+id/btnSaveContact"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"/>
+        android:layout_marginTop="16dp"
+        android:text="Save" />
 
 </LinearLayout>

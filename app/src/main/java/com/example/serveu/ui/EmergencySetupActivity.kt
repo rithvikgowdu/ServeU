@@ -16,21 +16,18 @@ class EmergencySetupActivity : AppCompatActivity() {
         binding = ActivityEmergencySetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val prefs = getSharedPreferences("ServeU_Prefs", Context.MODE_PRIVATE)
-
-        // Pre-fill the contact if it already exists
-        binding.etEmergencyContact.setText(prefs.getString("EMERGENCY_CONTACT", ""))
-
-        binding.btnSaveContact.setOnClickListener {
-            val contactNumber = binding.etEmergencyContact.text.toString()
-            if (contactNumber.isNotBlank()) {
-                prefs.edit().putString("EMERGENCY_CONTACT", contactNumber).apply()
-                
-                // Redirect to the main user screen
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+        binding.btnSave.setOnClickListener {
+            val emergencyNumber = binding.etEmergencyNumber.text.toString()
+            if (emergencyNumber.isNotEmpty()) {
+                saveEmergencyNumber(emergencyNumber)
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
         }
+    }
+
+    private fun saveEmergencyNumber(number: String) {
+        val sharedPreferences = getSharedPreferences("ServeU", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("EMERGENCY_NUMBER", number).apply()
     }
 }

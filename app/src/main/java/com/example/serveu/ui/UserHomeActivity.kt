@@ -58,14 +58,19 @@ class UserHomeActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            val prefs = getSharedPreferences("ServeU_Prefs", MODE_PRIVATE)
-            val emergencyContact = prefs.getString("EMERGENCY_CONTACT", "") ?: ""
+            val prefs = getSharedPreferences("ServeU", MODE_PRIVATE)
+            val emergencyContact = prefs.getString("EMERGENCY_NUMBER", "") ?: ""
+            if (emergencyContact.isEmpty()) {
+                Toast.makeText(this, "Please set an emergency contact first.", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, EmergencySetupActivity::class.java))
+                return@addOnSuccessListener
+            }
             val userPhone = "" // Cannot get user's number reliably, leave blank
 
             val request = EmergencyRequest(
                 id = UUID.randomUUID().toString(),
                 userPhoneNumber = userPhone,
-                emergencyContactNumber = emergencyContact,
+                emergencyContact = emergencyContact,
                 latitude = location.latitude,
                 longitude = location.longitude,
                 timestamp = System.currentTimeMillis()
@@ -74,14 +79,14 @@ class UserHomeActivity : AppCompatActivity() {
             if (isInternetAvailable()) {
                 // Online Flow
                 FirebaseDatabase.getInstance().getReference("emergency_requests")
-                    .child(request.id!!)
+                    .child(request.id)
                     .setValue(request)
                     .addOnSuccessListener { Toast.makeText(this, "Emergency request sent to admin.", Toast.LENGTH_SHORT).show() }
                     .addOnFailureListener { Toast.makeText(this, "Failed to send request. Check connection.", Toast.LENGTH_SHORT).show() }
             } else {
                 // Offline Flow (SMS fallback)
                 try {
-                    val adminPhoneNumber = "ADMIN_PHONE_NUMBER_HERE" // IMPORTANT: Replace with actual Admin number
+                    val adminPhoneNumber = "9440696941" // IMPORTANT: Replace with actual Admin number
                     val smsMessage = "Emergency! Contact: $emergencyContact. Location: ${location.latitude},${location.longitude}"
                     
                     val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
