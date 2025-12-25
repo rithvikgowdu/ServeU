@@ -8,19 +8,25 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.serveu.databinding.ActivityUserHomeBinding
+import com.example.serveu.firestore.FirestoreService
+import com.example.serveu.model.Emergency
 import com.example.serveu.model.EmergencyRequest
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.FirebaseDatabase
 import java.util.UUID
+import kotlinx.coroutines.launch
 
 class UserHomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserHomeBinding
     private val smsPermissionCode = 101
+    private val firestoreService = FirestoreService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +81,15 @@ class UserHomeActivity : AppCompatActivity() {
                 longitude = location.longitude,
                 timestamp = System.currentTimeMillis()
             )
+            val emergency = Emergency(
+                id = request.id,
+                emergencyType = "General", // Using a default type
+                description = "User Phone: ${request.userPhoneNumber}, Emergency Contact: ${request.emergencyContact}",
+                latitude = request.latitude,
+                longitude = request.longitude,
+                status = "pending"
+                // timestamp is now handled by @ServerTimestamp in the data class
+            )
 
             if (isInternetAvailable()) {
                 // Online Flow
@@ -83,12 +98,23 @@ class UserHomeActivity : AppCompatActivity() {
                     .setValue(request)
                     .addOnSuccessListener { Toast.makeText(this, "Emergency request sent to admin.", Toast.LENGTH_SHORT).show() }
                     .addOnFailureListener { Toast.makeText(this, "Failed to send request. Check connection.", Toast.LENGTH_SHORT).show() }
+                lifecycleScope.launch {
+                    try {
+                        firestoreService.saveEmergency(emergency)
+                        Log.d("UserHomeActivity", "Emergency successfully saved to Firestore.")
+                    } catch (e: Exception) {
+                        Log.e("UserHomeActivity", "Error saving to Firestore", e)
+                        runOnUiThread {
+                            Toast.makeText(this@UserHomeActivity, "Error saving to Firestore: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
             } else {
                 // Offline Flow (SMS fallback)
                 try {
                     val adminPhoneNumber = "9440696941" // IMPORTANT: Replace with actual Admin number
                     val smsMessage = "Emergency! Contact: $emergencyContact. Location: ${location.latitude},${location.longitude}"
-                    
+
                     val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         getSystemService(SmsManager::class.java)
                     } else {

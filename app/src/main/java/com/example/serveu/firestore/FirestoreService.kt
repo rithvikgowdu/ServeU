@@ -9,11 +9,11 @@ class FirestoreService {
     private val db = FirebaseFirestore.getInstance()
 
     suspend fun saveEmergency(emergency: Emergency) {
-        db.collection("emergencies").document(emergency.id).set(emergency).await()
+        db.collection("emergency_requests").document(emergency.id).set(emergency).await()
     }
 
     // This function can be used later to update the status
     suspend fun updateEmergencyStatus(emergencyId: String, newStatus: String) {
-        db.collection("emergencies").document(emergencyId).update("status", newStatus).await()
+        db.collection("emergency_requests").document(emergencyId).update("status", newStatus).await()
     }
 }
