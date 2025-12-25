@@ -10,7 +10,7 @@ class SecretCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecretCodeBinding
     private companion object {
-        private const val ADMIN_SECRET_CODE = "ADD_SECRET_CODE_HERE"
+        private const val ADMIN_SECRET_CODE = "BOSS6969"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
