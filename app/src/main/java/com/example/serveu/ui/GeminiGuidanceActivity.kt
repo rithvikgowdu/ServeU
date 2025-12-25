@@ -21,7 +21,7 @@ class GeminiGuidanceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGeminiBinding
 
-    private val apiKey = "AIzaSyAUyJD5DrUQ_52XoAdjLPGUmtqwSKuKvU4"
+    private val apiKey = "APi code here"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
