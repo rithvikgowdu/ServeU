@@ -1,11 +1,11 @@
 package com.example.serveu.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager
 import android.widget.Toast
@@ -20,7 +20,7 @@ import java.util.UUID
 class UserHomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserHomeBinding
-    private val SMS_PERMISSION_CODE = 101
+    private val smsPermissionCode = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class UserHomeActivity : AppCompatActivity() {
 
     private fun checkSmsPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), SMS_PERMISSION_CODE)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), smsPermissionCode)
         }
     }
 
@@ -58,7 +58,7 @@ class UserHomeActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            val prefs = getSharedPreferences("ServeU_Prefs", Context.MODE_PRIVATE)
+            val prefs = getSharedPreferences("ServeU_Prefs", MODE_PRIVATE)
             val emergencyContact = prefs.getString("EMERGENCY_CONTACT", "") ?: ""
             val userPhone = "" // Cannot get user's number reliably, leave blank
 
@@ -83,9 +83,17 @@ class UserHomeActivity : AppCompatActivity() {
                 try {
                     val adminPhoneNumber = "ADMIN_PHONE_NUMBER_HERE" // IMPORTANT: Replace with actual Admin number
                     val smsMessage = "Emergency! Contact: $emergencyContact. Location: ${location.latitude},${location.longitude}"
-                    SmsManager.getDefault().sendTextMessage(adminPhoneNumber, null, smsMessage, null, null)
+                    
+                    val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        getSystemService(SmsManager::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        SmsManager.getDefault()
+                    }
+                    smsManager.sendTextMessage(adminPhoneNumber, null, smsMessage, null, null)
+
                     Toast.makeText(this, "Offline SMS sent to admin.", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Toast.makeText(this, "Could not send SMS.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -93,7 +101,7 @@ class UserHomeActivity : AppCompatActivity() {
     }
 
     private fun isInternetAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -101,7 +109,7 @@ class UserHomeActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SMS_PERMISSION_CODE && (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED)) {
+        if (requestCode == smsPermissionCode && (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED)) {
             Toast.makeText(this, "SMS permission is required for offline emergencies.", Toast.LENGTH_LONG).show()
         }
     }
