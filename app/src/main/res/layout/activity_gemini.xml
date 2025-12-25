@@ -80,14 +80,14 @@
 
         <EditText
             android:id="@+id/inputText"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_width="305dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/glass_button_bg"
             android:hint="Ask for guidance..."
             android:padding="12dp"
             android:textColor="#0F172A"
-            android:textColorHint="#64748B"
-            android:background="@drawable/glass_button_bg"/>
+            android:textColorHint="#64748B" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sendBtn"
