@@ -91,6 +91,10 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 binding.status.text = "🌐 Emergency sent online"
                 showAiGuidance()
+                val intent = Intent(this, GeminiGuidanceActivity::class.java)
+                intent.putExtra("EMERGENCY_TYPE", selectedEmergency)
+                startActivity(intent)
+
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Firebase failed, using SMS", Toast.LENGTH_SHORT).show()
