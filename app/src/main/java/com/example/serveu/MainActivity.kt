@@ -9,17 +9,24 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.serveu.databinding.ActivityMainBinding
+import com.example.serveu.firestore.FirestoreService
+import com.example.serveu.model.Emergency
 import com.example.serveu.model.EmergencyRequest
 import com.example.serveu.ui.EmergencySetupActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.FirebaseDatabase
 import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private var selectedEmergency = "General SOS"
     private val adminPhoneNumber = "9440696941"
+
+    private val firestoreService = FirestoreService()
 
     // 🔒 STATE LOCK
     private var emergencySent = false
@@ -116,6 +125,26 @@ class MainActivity : AppCompatActivity() {
             longitude = currentLocation!!.longitude,
             timestamp = System.currentTimeMillis()
         )
+
+        val emergency = Emergency(
+            id = requestId,
+            emergencyType = selectedEmergency,
+            description = "Emergency Contact: $emergencyContact",
+            latitude = currentLocation!!.latitude,
+            longitude = currentLocation!!.longitude,
+            status = "pending"
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                firestoreService.saveEmergency(emergency)
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error saving to Firestore", e)
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Error saving to Firestore: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
         database.child(requestId).setValue(request)
             .addOnSuccessListener {
