@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="32dp">
+    android:padding="40dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select Your Role"
-        android:textSize="24sp"
+        android:text="Your Role"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:layout_marginBottom="48dp"/>
 
@@ -18,13 +18,15 @@
         android:id="@+id/btnAdmin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I am an Admin"
+        android:text="Admin"
+        android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
     <Button
         android:id="@+id/btnRegularUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I am a Regular User"/>
+        android:textStyle="bold"
+        android:text="User"/>
 
 </LinearLayout>
