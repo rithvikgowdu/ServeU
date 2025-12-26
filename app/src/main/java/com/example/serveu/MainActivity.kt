@@ -44,6 +44,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check for emergency contact
+        val prefs = getSharedPreferences("ServeU", Context.MODE_PRIVATE)
+        val emergencyContact = prefs.getString("EMERGENCY_NUMBER", null)
+
+        if (emergencyContact.isNullOrEmpty()) {
+            startActivity(Intent(this, EmergencySetupActivity::class.java))
+            finish() // Finish MainActivity so user can't go back
+            return
+        }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setupEmergencyButtons()
@@ -118,12 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendOnlineEmergency() {
         val prefs = getSharedPreferences("ServeU", Context.MODE_PRIVATE)
-        val emergencyContact = prefs.getString("EMERGENCY_NUMBER", null)
-
-        if (emergencyContact.isNullOrEmpty()) {
-            startActivity(Intent(this, EmergencySetupActivity::class.java))
-            return
-        }
+        val emergencyContact = prefs.getString("EMERGENCY_NUMBER", null)!!
 
         val database = FirebaseDatabase.getInstance().getReference("emergency_requests")
         val requestId = database.push().key ?: return

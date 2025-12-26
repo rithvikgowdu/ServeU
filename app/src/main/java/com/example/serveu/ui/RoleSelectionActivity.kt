@@ -37,9 +37,7 @@ class RoleSelectionActivity : AppCompatActivity() {
         // ---------------- BUTTONS ----------------
 
         binding.btnAdmin.setOnClickListener {
-            prefs.edit().putString("ROLE", "ADMIN").apply()
-            startActivity(Intent(this, AdminDashboardActivity::class.java))
-            finish()
+            startActivity(Intent(this, SecretCodeActivity::class.java))
         }
 
         binding.btnRegularUser.setOnClickListener {
