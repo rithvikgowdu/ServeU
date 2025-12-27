@@ -21,25 +21,19 @@ class EmergencySetupActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             val emergencyNumber = binding.etEmergencyNumber.text.toString().trim()
 
-            // ❌ Empty
             if (emergencyNumber.isEmpty()) {
                 binding.etEmergencyNumber.error = "Enter phone number"
                 return@setOnClickListener
             }
 
-            // ❌ Too short to be real
             if (emergencyNumber.length < 8) {
                 binding.etEmergencyNumber.error = "Enter a valid phone number"
                 return@setOnClickListener
             }
-
-            // ❌ Android international validation
             if (!Patterns.PHONE.matcher(emergencyNumber).matches()) {
                 binding.etEmergencyNumber.error = "Invalid phone number"
                 return@setOnClickListener
             }
-
-            // ✅ Save
             saveEmergencyNumber(emergencyNumber)
             Toast.makeText(this, "Emergency number saved", Toast.LENGTH_SHORT).show()
 
