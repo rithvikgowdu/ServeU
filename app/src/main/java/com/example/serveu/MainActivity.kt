@@ -27,6 +27,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
+import android.location.LocationManager
+import android.provider.Settings
+import com.google.android.gms.location.Priority
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -96,11 +101,26 @@ class MainActivity : AppCompatActivity() {
     private fun setupSendButton() {
         binding.startHelpBtn.setOnClickListener {
 
+            // 🔴 Location service OFF
+            if (!isLocationEnabled()) {
+                Toast.makeText(
+                    this,
+                    "Please turn on location to continue",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // Open location settings
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                return@setOnClickListener
+            }
+
+// 🔴 Location ON but not fetched yet
             if (currentLocation == null) {
                 Toast.makeText(this, "Getting location…", Toast.LENGTH_SHORT).show()
                 fetchLocation()
                 return@setOnClickListener
             }
+
 
             val mode = if (isInternetAvailable()) "ONLINE" else "OFFLINE"
 
@@ -217,14 +237,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchLocation() {
         if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) return
 
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            if (it != null) updateLocationUI(it)
+        fusedLocationClient.getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            null
+        ).addOnSuccessListener { location ->
+            if (location != null) {
+                updateLocationUI(location)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Unable to get location. Please try again.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
+
 
     private fun updateLocationUI(location: Location) {
         currentLocation = location
@@ -241,6 +274,14 @@ class MainActivity : AppCompatActivity() {
         val caps = cm.getNetworkCapabilities(network) ?: return false
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
+    private fun isLocationEnabled(): Boolean {
+        val locationManager =
+            getSystemService(LOCATION_SERVICE) as LocationManager
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
