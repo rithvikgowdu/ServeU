@@ -56,32 +56,39 @@ class GeminiGuidanceActivity : AppCompatActivity() {
         return when {
             type.contains("Accident", true) ->
                 """
-                1. Ensure your own safety first and move away from traffic.
-                2. Do not move injured persons unless there is immediate danger.
-                3. Control bleeding using clean cloth if possible.
-                4. Contact emergency services immediately.
-                5. Stay with the injured person until help arrives.
-                """.trimIndent()
+            We have received your emergency alert. Stay calm — we are with you.
+
+            1. First, secure your own safety. Move away from traffic, fire, or any immediate danger.
+            2. Do not move the injured person unless leaving them there would put their life at risk.
+            3. If there is active bleeding, apply firm and continuous pressure using a clean cloth or your hand.
+            4. Keep this app open and follow each instruction as it appears.
+            5. Remain with the injured person, reassure them, and closely monitor their condition until responders arrive.
+            """.trimIndent()
 
             type.contains("Medical", true) ->
                 """
-                1. Check breathing and consciousness.
-                2. Keep the person calm and comfortable.
-                3. Do not give food or water.
-                4. Monitor symptoms carefully.
-                5. Seek medical help immediately.
-                """.trimIndent()
+            Your medical emergency has been registered. We are guiding you step by step.
+
+            1. Check whether the person is conscious and breathing normally.
+            2. Help them remain calm and position them comfortably in a safe area.
+            3. Do not give food, water, or medication unless specifically instructed by medical staff.
+            4. Watch carefully for any changes in symptoms or behavior.
+            5. Stay connected and continue following instructions until medical help reaches you.
+            """.trimIndent()
 
             else ->
                 """
-                1. Stay calm and avoid panic.
-                2. Move to a safe and visible place.
-                3. Keep your phone battery conserved.
-                4. Inform someone you trust.
-                5. Wait safely for assistance.
-                """.trimIndent()
+            Your emergency request is active. Follow our guidance carefully.
+
+            1. Move to a safe, well-lit, and visible location away from potential hazards.
+            2. Use your phone only as needed to conserve battery for emergency communication.
+            3. Keep this app open and stay attentive to further instructions.
+            4. Inform us immediately if the situation changes or worsens.
+            5. Remain calm and wait safely until assistance arrives.
+            """.trimIndent()
         }
     }
+
 
     // ---------------- ONLINE MODE ----------------
 
