@@ -9,7 +9,7 @@ import com.example.serveu.databinding.ActivitySecretCodeBinding
 class SecretCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySecretCodeBinding
-    private val ADMIN_SECRET_CODE = "BOSS6969"
+    private val ADMIN_SECRET_CODE = "123456789"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
